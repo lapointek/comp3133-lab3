@@ -2,10 +2,6 @@ const express = require("express");
 const restaurantModel = require("../models/Restaurant");
 const app = express();
 
-app.get("/:restaurants", (req, res) => {
-    res.send("404 URL NOT FOUND");
-});
-
 // Get All
 app.get("/restaurants", async (req, res) => {
     const restaurants = await restaurantModel.find({});
