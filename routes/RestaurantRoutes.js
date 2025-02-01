@@ -2,6 +2,10 @@ const express = require("express");
 const restaurantModel = require("../models/Restaurant");
 const app = express();
 
+app.get("/:restaurants", (req, res) => {
+    res.send("404 URL NOT FOUND");
+});
+
 // Get All
 app.get("/restaurants", async (req, res) => {
     const restaurants = await restaurantModel.find({});
@@ -60,9 +64,30 @@ app.get("/restaurants", async (req, res) => {
     }
 });
 
-// 7.	Create REST API to return restaurants details where all cuisines are equal to Delicatessen and the city is not equal to Brooklyn
-// -	The selected columns must include cuisines, name and city, but exclude id
-// -	The sorting order must be Ascending Order on the name
-
 // http://localhost:3000/restaurants/Delicatessen
+app.get("/restaurants/Delicatessen", async (req, res) => {
+    try {
+        const restaurants = await restaurantModel
+            .find(
+                {
+                    cuisine: "Delicatessen",
+                },
+                {
+                    _id: 0,
+                    cuisine: 1,
+                    name: 1,
+                    city: 1,
+                }
+            )
+            .sort({ name: 1 });
+        if (restaurants.length > 0) {
+            res.status(200).json(restaurants);
+        } else {
+            res.status(404).json({ status: false, message: "No data found" });
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, message: err.message });
+    }
+});
+
 module.exports = app;
