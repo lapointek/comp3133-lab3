@@ -30,12 +30,17 @@ app.get("/restaurants/cuisine/:cuisine", async (req, res) => {
     }
 });
 
+// Return all restaurants by descending or ascending
 app.get("/restaurants", async (req, res) => {
-    const sortBy = req.query.sortBy;
+    const sortBy = req.query.sortBy?.toUpperCase();
+    const sortOrder = sortBy === "DESC" ? -1 : 1;
 
-    let sortOrder = 1;
-    if (sortBy && sortBy.toUpperCase() === "DESC") {
-        sortOrder = -1;
+    if (sortBy != "DESC" && sortBy != "ASC") {
+        res.status(400).json({
+            status: false,
+            message: "Invalid sortBy parameter. Use ASC or DESC.",
+        });
+        return;
     }
     try {
         const restaurants = await restaurantModel
@@ -60,7 +65,7 @@ app.get("/restaurants", async (req, res) => {
     }
 });
 
-// http://localhost:3000/restaurants/Delicatessen
+// Get all restaurants of type Delicatessen
 app.get("/restaurants/Delicatessen", async (req, res) => {
     try {
         const restaurants = await restaurantModel
